@@ -20,8 +20,8 @@ def clibboard_setup() -> (ctypes.WinDLL, ctypes.WinDLL):
     return user32, kernel32
 
 
-#receiving _ digit passowrd from the clipboard
-def getClip_digit(user32:ctypes.WinDLL, kernel32:ctypes.WinDLL, digit_lenght:int, CF_TEXT:int=1) -> str:
+#receiving 6 digit passowrd from the clipboard
+def getClip6digit(user32:ctypes.WinDLL, kernel32:ctypes.WinDLL, CF_TEXT:int=1) -> str:
     try:
         user32.OpenClipboard(0)
         try:
@@ -31,7 +31,7 @@ def getClip_digit(user32:ctypes.WinDLL, kernel32:ctypes.WinDLL, digit_lenght:int
                 text = ctypes.c_char_p(data_locked)
                 value = text.value
                 kernel32.GlobalUnlock(data_locked)
-                digits = re.findall(rf'\b\d{{{digit_lenght}}}\b', (str(value)))
+                digits = re.findall(r'(\d{6})', (str(value)))
                 if digits:
                     return str(digits[0])
                 else:
@@ -40,7 +40,6 @@ def getClip_digit(user32:ctypes.WinDLL, kernel32:ctypes.WinDLL, digit_lenght:int
             user32.CloseClipboard()
     except:
         return
-
 
 #receiving _ email address from the clipboard 
 def getMail(user32:ctypes.WinDLL, kernel32:ctypes.WinDLL, CF_TEXT:int=1) -> str:
@@ -70,64 +69,60 @@ def create_username_password(option:str, length:int=8) -> (str, str):
         password = randomize(option, length)
         with open("accLog.txt", "a") as logfile:
             logfile.write(f"{username}@proton.me:{password}\n")
+        print(username+"@proton.me:" + password)
         return username, password
     except:
         return
     
-# #create account 
-# def create_acc(username, password):
-#     webbrowser.open('https://account.proton.me/signup?plan=free')
-# # time.sleep(5)
+#create account 
+def create_acc(username:str, password:str) -> None:
+    webbrowser.open('https://account.proton.me/signup?plan=free')
+    time.sleep(5)
+    pyautogui.typewrite(username + '\t\t\t')
+    print("Username:" + username)
+    pyautogui.typewrite(password + '\t' + password + '\t')
+    print("Password:" + password)
+    pyautogui.typewrite('\n')
+    time.sleep(5)
+
+#get temporary email address email
+def get_email(user32:ctypes.WinDLL, kernel32:ctypes.WinDLL, CF_TEXT:int=1) -> None:
+    #pyautogui.typewrite('\t\t\t\n\t\t')
+    time.sleep(5)
+    pyautogui.keyDown('ctrlleft');  pyautogui.typewrite('t'); pyautogui.keyUp('ctrlleft')
+    time.sleep(10)
+    # pyautogui.typewrite('https://dropmail.me/\n') Email address verification temporarily disabled for this email domain. Please try another verification method. I've chosen another site
+    pyautogui.typewrite('https://www.emailnator.com/\n')
+    time.sleep(10)
+    while True:
+        pyautogui.hotkey('ctrl', 'a')
+        pyautogui.hotkey('ctrl', 'c')
+        mail = getMail(user32, kernel32, CF_TEXT)
+        if mail:
+            print("10 min mail: " + mail[1:])
+            pyautogui.click(x=950, y=798)
+            time.sllep(3)
+            pyautogui.click(x=950, y=798)
+            time.sleep(5)
+            break
+        else:
+            pyautogui.keyDown('ctrlleft'); pyautogui.typewrite('r'); pyautogui.keyUp('ctrlleft')
+            time.sleep(5)
+    pyautogui.keyDown('ctrlleft');  pyautogui.typewrite('\t'); pyautogui.keyUp('ctrlleft')
+    time.sleep(5)
+    pyautogui.typewrite(mail)
+    pyautogui.typewrite('\t\n')
+    pyautogui.keyDown('ctrlleft');  pyautogui.typewrite('\t'); pyautogui.keyUp('ctrlleft')
+
+
+   
+
+user32, kernel32 = clibboard_setup()
+get_email(user32, kernel32)
 
 
 
 
-
-
-
-# pyautogui.typewrite(_username_ + '\t\t')
-# print("Username:" + _username_)
-
-# # Password
-# _password_=randomize('-p',16)
-# pyautogui.typewrite(_password_+'\t'+_password_+'\t')
-# print("Password:" + _password_)
-
-# pyautogui.typewrite('\n')
-# time.sleep(5)
-# pyautogui.typewrite('\t\t\t\n')
-
-# pyautogui.keyDown('ctrlleft');  pyautogui.typewrite('t'); pyautogui.keyUp('ctrlleft')
-
-# time.sleep(10)
-# pyautogui.typewrite('https://dropmail.me/\n')
-
-
-# pyautogui.keyDown('shift');pyautogui.keyDown('down'); pyautogui.keyUp('down'); pyautogui.keyUp('shift')
-# time.sleep(10)
-
-# newMail = True
-# while True:
-#     if not newMail:
-#         pyautogui.keyDown('ctrlleft'); pyautogui.typewrite('r'); pyautogui.keyUp('ctrlleft')
-#         time.sleep(5)
-#     pyautogui.typewrite('\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t')
-#     pyautogui.keyDown('ctrlleft')
-#     pyautogui.keyDown('shiftleft')
-#     pyautogui.keyDown('shiftright')
-#     pyautogui.press('down')
-#     pyautogui.keyUp('shiftleft')
-#     pyautogui.keyUp('shiftright')
-#     pyautogui.keyUp('ctrlleft')
-#     pyautogui.keyDown('ctrlleft'); pyautogui.typewrite('c'); pyautogui.keyUp('ctrlleft')
-#     newMail = getMail()
-#     if newMail:
-#         print("10 min mail: " + newMail)
-#         break
-
-# pyautogui.keyDown('ctrlleft');  pyautogui.typewrite('\t'); pyautogui.keyUp('ctrlleft')
-# time.sleep(1)
-# #äpyautogui.typewrite(newMail)
 # pyautogui.keyDown('ctrlleft');  pyautogui.typewrite('v'); pyautogui.keyUp('ctrlleft')
 # pyautogui.press('backspace')
 # pyautogui.typewrite('\n')
@@ -160,9 +155,6 @@ def create_username_password(option:str, length:int=8) -> (str, str):
 
 # print(_username_+"@proton.me:" + _password_)
 
-# logfile = open("accLog.txt", "a")
-# logfile.write(_username_ + "@proton.me:" + _password_ + "\n")
-# logfile.close()
 
 
 
