@@ -52,7 +52,7 @@ def getMail(user32:ctypes.WinDLL, kernel32:ctypes.WinDLL, CF_TEXT:int=1) -> str:
                 text = ctypes.c_char_p(data_locked)
                 value = text.value
                 kernel32.GlobalUnlock(data_locked)
-                match = re.search(r'[\w\.-]+@[\w\.-]+\.\w+', str(value))
+                match = re.search(r'[\w\.-]+(?:\+[\w\.-]*)?@[\w\.-]+\.\w+', str(value))
                 if match:
                     return match.group(0)
                 else:
@@ -76,18 +76,21 @@ def create_username_password(option:str, length:int=8) -> (str, str):
     
 #create account 
 def create_acc(username:str, password:str) -> None:
-    webbrowser.open('https://account.proton.me/signup?plan=free')
-    time.sleep(5)
-    pyautogui.typewrite(username + '\t\t\t')
-    print("Username:" + username)
-    pyautogui.typewrite(password + '\t' + password + '\t')
-    print("Password:" + password)
-    pyautogui.typewrite('\n')
-    time.sleep(5)
+    try:
+        webbrowser.open('https://account.proton.me/signup?plan=free')
+        time.sleep(5)
+        pyautogui.typewrite(username + '\t\t\t')
+        print("Username:" + username)
+        pyautogui.typewrite(password + '\t' + password + '\t')
+        print("Password:" + password)
+        pyautogui.typewrite('\n')
+        time.sleep(5)
+    except:
+        return
 
 #get temporary email address email
 def get_email(user32:ctypes.WinDLL, kernel32:ctypes.WinDLL, CF_TEXT:int=1) -> None:
-    #pyautogui.typewrite('\t\t\t\n\t\t')
+    pyautogui.typewrite('\t\t\t\n\t\t')
     time.sleep(5)
     pyautogui.keyDown('ctrlleft');  pyautogui.typewrite('t'); pyautogui.keyUp('ctrlleft')
     time.sleep(10)
@@ -98,10 +101,10 @@ def get_email(user32:ctypes.WinDLL, kernel32:ctypes.WinDLL, CF_TEXT:int=1) -> No
         pyautogui.hotkey('ctrl', 'a')
         pyautogui.hotkey('ctrl', 'c')
         mail = getMail(user32, kernel32, CF_TEXT)
-        if mail:
+        if mail and "@gmail" in mail:
             print("10 min mail: " + mail[1:])
             pyautogui.click(x=950, y=798)
-            time.sllep(3)
+            time.sleep(3)
             pyautogui.click(x=950, y=798)
             time.sleep(5)
             break
@@ -110,61 +113,23 @@ def get_email(user32:ctypes.WinDLL, kernel32:ctypes.WinDLL, CF_TEXT:int=1) -> No
             time.sleep(5)
     pyautogui.keyDown('ctrlleft');  pyautogui.typewrite('\t'); pyautogui.keyUp('ctrlleft')
     time.sleep(5)
-    pyautogui.typewrite(mail)
+    pyautogui.typewrite(mail[1:])
     pyautogui.typewrite('\t\n')
+    time.sleep(5)
     pyautogui.keyDown('ctrlleft');  pyautogui.typewrite('\t'); pyautogui.keyUp('ctrlleft')
-
-
-   
-
-user32, kernel32 = clibboard_setup()
-get_email(user32, kernel32)
-
-
-
-
-# pyautogui.keyDown('ctrlleft');  pyautogui.typewrite('v'); pyautogui.keyUp('ctrlleft')
-# pyautogui.press('backspace')
-# pyautogui.typewrite('\n')
-
-# time.sleep(10)
-
-# pyautogui.keyDown('ctrlleft');  pyautogui.typewrite('\t'); pyautogui.keyUp('ctrlleft')
-# time.sleep(1)
-
-# #pyautogui.typewrite('\t\t\t\t\t\t\t\t\t\t\t\t\t\n')
-
-# #time.sleep(5)
-
-
-# pyautogui.keyDown('ctrlleft');  pyautogui.typewrite('a'); pyautogui.keyUp('ctrlleft')
-# pyautogui.keyDown('ctrlleft'); pyautogui.typewrite('c'); pyautogui.keyUp('ctrlleft')
-
-
-# pyautogui.keyDown('ctrlleft');  pyautogui.typewrite('\t'); pyautogui.keyUp('ctrlleft')
-# time.sleep(5)
-# pyautogui.typewrite(str(getClip6digit()) + '\n')
-
-
-# time.sleep(5)
-# pyautogui.typewrite('\n')
-# time.sleep(5)
-# pyautogui.typewrite('\t\t\t\t\n')
-# time.sleep(1)
-# pyautogui.typewrite('\t\n')
-
-# print(_username_+"@proton.me:" + _password_)
-
-
-
-
-# CHAPTCHA
-#pyautogui.typewrite('\t')
-#pyautogui.typewrite('\t')
-#pyautogui.typewrite('\t')
-#pyautogui.typewrite('\t')
-#pyautogui.typewrite('\t')
-#pyautogui.typewrite('\t')
-#pyautogui.typewrite('\t')
-
-#pyautogui.typewrite('\n')
+    time.sleep(60)
+    pyautogui.keyDown('ctrlleft'); pyautogui.typewrite('r'); pyautogui.keyUp('ctrlleft')
+    time.sleep(10)
+    pyautogui.click(x=761, y=736)
+    pyautogui.hotkey('ctrl', 'a')
+    pyautogui.hotkey('ctrl', 'c')
+    code = getClip6digit(user32, kernel32, CF_TEXT)
+    pyautogui.keyDown('ctrlleft');  pyautogui.typewrite('\t'); pyautogui.keyUp('ctrlleft')
+    pyautogui.typewrite(code)
+    pyautogui.typewrite('\t\n')
+    
+if __name__ == '__main__':
+    user32, kernel32 = clibboard_setup()
+    username, password = create_username_password('-p')
+    create_acc(username, password)
+    get_email(user32, kernel32)

@@ -4,7 +4,7 @@ import random
 def randomize(_option_, _length_) -> str:
     try:
         character_sets = {
-            '-p': 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()_+',
+            '-p': 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_.-', #!@#$%^&*()+ is not valid
             '-s': 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890',
             '-l': 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
             '-n': '1234567890',
